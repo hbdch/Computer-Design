@@ -13,12 +13,12 @@
 
 CHIP DMux4Way {
     IN in, sel[2];
-	
     OUT a, b, c, d;
 
     PARTS:
     // Put your code here:
-	DMux (in = in, sel = sel[1], a = first,  b = second);
-	DMux (in = first, sel = sel[0], a = a, b = b);
-	DMux (in = second, sel = sel[0], a = c, b = d);
+    DMux(in=in, sel=sel[1], a=temp1, b=temp2);
+    DMux(in=temp1, sel=sel[0], a=a, b=b);
+    DMux(in=temp2, sel=sel[0], a=c, b=d);
+
 }

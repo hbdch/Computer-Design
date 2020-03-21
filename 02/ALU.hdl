@@ -43,26 +43,35 @@ CHIP ALU {
 
     PARTS:
    // Put you code here:
-    Mux16(a=x, b=false, sel=zx, out=out1);
-	Not16(in=out1, out=nout1);
-	Mux16(a=out1, b=nout1, sel=nx, out=outx);
-	
-    Mux16(a=y, b=false, sel=zy, out=out2);
-    Not16(in=out2, out=nout2);
-    Mux16(a=out2, b=nout2, sel=ny, out=outy);
 
-    And16(a=outx, b=outy, out=xandy);
-    Add16(a=outx, b=outy, out=xaddy);
-    Mux16(a=xandy, b=xaddy, sel=f, out=func);
+   //zr flag
+   And16(a=x, b=false, out=zerox);
+   Mux16(a=x, b=zerox, sel=zx, out=tempx);
+   //nx flag
+   Not16(in=tempx, out=notx);
+   Mux16(a=tempx, b=notx, sel=nx, out=finalx);
 
-    Not16(in=func, out=nfunc);
-    Mux16(a=func, b=nfunc, sel=no, out=out, out[0..7]=first, out[8..15]=second, out[15]=ng);
+   //zy flag
+   And16(a=y, b=false, out=zeroy);
+   Mux16(a=y, b=zeroy, sel=zy, out=tempy);
+   //ny flag
+   Not16(in=tempy, out=noty);
+   Mux16(a=tempy, b=noty, sel=ny, out=finaly);
 
-	Or8Way(in=first, out=fset);
-    Or8Way(in=second, out=sset);
-	Or(a=fset, b=sset, out=res);
-    Not(in=res, out=zr); 
-    
-    
+   //f flag
+   Add16(a=finalx, b=finaly, out=xaddy);
+   And16(a=finalx, b=finaly, out=xandy);
+   Mux16(a=xandy, b=xaddy, sel=f, out=arithmeticresult);
 
+   //no flag
+   Not16(in=arithmeticresult, out=nresult);
+   Mux16(a=arithmeticresult, b=nresult, sel=no, out=out, out[0..7]=first, out[8..15]=second, out[15]=ng); //ng control bit
+
+   //zr control bit
+   Or8Way(in=first, out=o1);
+   Or8Way(in=second, out=o2);
+   Or(a=o1, b=o2, out=o3);
+   Not(in=o3, out=zr);
+
+   
 }

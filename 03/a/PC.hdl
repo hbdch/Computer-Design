@@ -3,7 +3,6 @@
 // by Nisan and Schocken, MIT Press.
 // File name: projects/03/a/PC.hdl
 
-
 /**
  * A 16-bit counter with load and reset control bits.
  * if      (reset[t] == 1) out[t+1] = 0
@@ -18,12 +17,13 @@ CHIP PC {
 
     PARTS:
     // Put your code here:
-	
-	Register(in=ret ,load=true ,out=out, out=out1 );
-	Inc16(in=out1 ,out=incout1 );
-	Mux16(a=out1 ,b=incout1 ,sel=inc ,out=first );
-	Mux16(a=first ,b=in ,sel=load ,out=second );
-	Mux16(a=second ,b=false ,sel=reset ,out=ret );
-	
-	
+
+    Inc16(in=incin, out=mux1in);
+    Mux16(a=false, b=mux1in, sel=inc, out=mux2in);
+    Mux16(a=mux2in, b=in, sel=load, out=mux3in);
+    Mux16(a=mux3in, b=false, sel=reset, out=regin);
+    Or(a=load, b=inc, out=loadorinc);
+    Or(a=loadorinc, b=reset, out=regload);
+    Register(in=regin, load=regload, out=out, out=incin);
+
 }
